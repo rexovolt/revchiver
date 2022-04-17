@@ -1,6 +1,6 @@
 {
   "name": "revchiver",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Archiving library for Revolt.",
   "main": "dist/src/index.js",
   "type": "module",
