@@ -2,7 +2,7 @@ import { Client } from "revolt.js";
 
 import { Message } from "revolt.js/dist/maps/Messages";
 
-export async function archive(client: Client, msg: Message, botMsg?: Message) {
+export default async function archive(client: Client, msg: Message, botMsg?: Message) {
   const autumnURL = msg.client.configuration?.features.autumn.url;
 
   const archiveData = {
