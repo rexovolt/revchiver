@@ -35,7 +35,8 @@
   "bin": "dist/src/index.js",
   "files": [
     "dist/",
-    "CHANGELOG.md"
+    "CHANGELOG.md",
+    "index.d.ts"
   ],
   "devDependencies": {
     "@types/node": "^17.0.23",
