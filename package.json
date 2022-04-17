@@ -1,6 +1,6 @@
 {
   "name": "revchiver",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Archiving library for Revolt.",
   "main": "dist/src/index.js",
   "type": "module",
@@ -35,8 +35,8 @@
   "bin": "dist/src/index.js",
   "files": [
     "dist/",
-    "CHANGELOG.md",
-    "index.d.ts"
+    "src",
+    "CHANGELOG.md"
   ],
   "devDependencies": {
     "@types/node": "^17.0.23",
