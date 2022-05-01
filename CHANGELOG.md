@@ -1,3 +1,7 @@
+# v0.2.0 (2022-05-01)
+
+- BREAKING: `archive()` has been renamed to `archiveChannel()`, and now returns an object instead of a string.
+
 # v0.1.4 (2022-04-17)
 
 - Fix types (#1) - thanks @sportshead!
