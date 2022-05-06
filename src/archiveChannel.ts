@@ -1,8 +1,10 @@
-import { Client } from "revolt.js";
-
 import { Message } from "revolt.js/dist/maps/Messages";
 
-async function archiveChannel(client: Client, msg: Message, botMsg?: Message) {
+async function archiveChannel(
+  msg: Message,
+  ignoreSuppliedMessage: boolean = true,
+  botMsg?: Message
+) {
   const autumnURL = msg.client.configuration?.features.autumn.url;
 
   const archiveData = {
@@ -26,7 +28,11 @@ async function archiveChannel(client: Client, msg: Message, botMsg?: Message) {
 
   // fetch/push messages
   let continueFetching = true;
-  let fetchbefore = msg._id;
+  let fetchbefore = botMsg
+    ? botMsg._id
+    : ignoreSuppliedMessage
+    ? msg._id
+    : undefined;
   while (continueFetching) {
     const msgs = await msg.channel?.fetchMessagesWithUsers({
       limit: 100,
