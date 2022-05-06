@@ -34,10 +34,11 @@ async function archiveChannel(
     ? msg._id
     : undefined;
   while (continueFetching) {
-    const msgs = await msg.channel?.fetchMessagesWithUsers({
-      limit: 100,
-      before: fetchbefore,
-    });
+    // hacky workaround for before param
+    const configObj = fetchbefore
+      ? { limit: 100, before: fetchbefore }
+      : { limit: 100 };
+    const msgs = await msg.channel?.fetchMessagesWithUsers(configObj);
     if (!msgs || !msgs.messages) return "nothingToArchive";
     const users = msgs.members;
     msgs.messages.forEach((m) => {

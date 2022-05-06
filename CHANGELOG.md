@@ -1,3 +1,7 @@
+# v0.3.1 (2022-05-06)
+
+- Hotfix for v0.3.0.
+
 # v0.3.0 (2022-05-06)
 
 - BREAKING: The `client` param of `archiveChannel()` has been removed - it was unused.
