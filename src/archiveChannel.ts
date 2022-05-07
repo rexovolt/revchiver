@@ -1,10 +1,6 @@
 import { Member, Message } from "revolt.js";
 
-async function archiveChannel(
-  msg: Message,
-  ignoreSuppliedMessage: boolean = true,
-  botMsg?: Message
-) {
+async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
   const autumnURL = msg.client.configuration?.features.autumn.url;
 
   const archiveData = {
@@ -52,7 +48,7 @@ async function archiveChannel(
     });
   }
   let continueFetching = true;
-  let fetchbefore = botMsg ? botMsg._id : msg._id;
+  let fetchbefore = msg._id;
   while (continueFetching) {
     const msgs = await msg.channel?.fetchMessagesWithUsers({
       limit: 100,
@@ -60,24 +56,24 @@ async function archiveChannel(
     });
     if (!msgs || !msgs.messages) return "nothingToArchive";
     const users = msgs.members;
-    if (!ignoreSuppliedMessage) {
-      const extraMsg = await msg.channel?.fetchMessagesWithUsers({
-        limit: 100,
-        before: fetchbefore,
-      });
+
+    if (fetchbefore === msg._id) {
+      const extraMsg = await msg.channel?.fetchMessagesWithUsers({ limit: 1 });
       pushMsg(extraMsg?.messages[0]!, extraMsg?.members!);
     }
     msgs.messages.forEach((m) => {
-      pushMsg(m, users!);
+      if (!ignoredMsgs || !ignoredMsgs.includes(m)) {
+        pushMsg(m, users!);
+      }
       if (msgs.messages.length < 100) {
         continueFetching = false;
       } else {
         fetchbefore = msgs.messages[99]._id;
       }
     });
-
-    return archiveData;
   }
+
+  return archiveData;
 }
 
 export { archiveChannel };
