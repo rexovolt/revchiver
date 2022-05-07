@@ -26,12 +26,13 @@ async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
   archiveData.archived_at = msg.createdAt;
 
   // fetch/push messages
-  function pushMsg(m: Message, users: Member[]) {
-    let sender;
-    for (const u of users!) {
-      if (m.author_id !== u.user?._id) continue;
-      sender = u;
-    }
+  function pushMsg(m: Message) {
+    // users?: Member[]
+    // let sender;
+    // for (const u of users!) {
+    //   if (m.author_id !== u.user?._id) continue;
+    //   sender = u;
+    // }
 
     let attachmentsObj: string[] = [];
     m.attachments?.forEach((a) => {
@@ -40,10 +41,11 @@ async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
     archiveData.messages.push({
       message_id: m._id,
       sender_id: m.author_id,
-      sender_name: m.masquerade?.name ?? sender?.nickname ?? m.author?.username, // order: masq > nick > username
+      sender_name:
+        m.masquerade?.name ?? m.member?.nickname ?? m.author?.username, // order: masq > nick > username
       sender_avatar: `${autumnURL}/avatars/${
-        m.masquerade?.avatar ?? sender?.avatar
-          ? `${sender?.avatar?._id}/${sender?.avatar?.filename}`
+        m.masquerade?.avatar ?? m.member?.avatar
+          ? `${m.member?.avatar?._id}/${m.member?.avatar?.filename}`
           : `${m.author?.avatar?._id}/${m.author?.avatar?.filename}`
       }`, // order: masq > server > global
       content: m.content ?? m.system,
@@ -53,25 +55,24 @@ async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
   let continueFetching = true;
   let fetchbefore = msg._id;
   while (continueFetching) {
-    const msgs = await msg.channel?.fetchMessagesWithUsers({
+    const msgs = await msg.channel?.fetchMessages({
       limit: 100,
       before: fetchbefore,
     });
-    if (!msgs || !msgs.messages) return "nothingToArchive";
-    const users = msgs.members;
+    if (!msgs) return "nothingToArchive";
 
     if (fetchbefore === msg._id) {
-      const extraMsg = await msg.channel?.fetchMessagesWithUsers({ limit: 1 });
-      pushMsg(extraMsg?.messages[0]!, extraMsg?.members!);
+      const extraMsg = await msg.channel?.fetchMessage(msg._id);
+      pushMsg(extraMsg!);
     }
-    msgs.messages.forEach((m) => {
+    msgs.forEach((m) => {
       if (!ignoredMsgs || !ignoredMsgs.includes(m)) {
-        pushMsg(m, users!);
+        pushMsg(m);
       }
-      if (msgs.messages.length < 100) {
+      if (msgs.length < 100) {
         continueFetching = false;
       } else {
-        fetchbefore = msgs.messages[99]._id;
+        fetchbefore = msgs[99]._id;
       }
     });
 

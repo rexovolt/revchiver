@@ -1,3 +1,7 @@
+# v0.5.2 (2022-05-07)
+
+- Optimise message fetcher.
+
 # v0.5.1 (2022-05-07)
 
 - Avoid ratelimiting.
