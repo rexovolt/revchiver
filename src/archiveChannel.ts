@@ -1,6 +1,9 @@
 import { Member, Message } from "revolt.js";
 
 async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
+  const sleep = (ms: number | undefined) =>
+    new Promise((r) => setTimeout(r, ms));
+
   const autumnURL = msg.client.configuration?.features.autumn.url;
 
   const archiveData = {
@@ -71,6 +74,9 @@ async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
         fetchbefore = msgs.messages[99]._id;
       }
     });
+
+    // wait 5 seconds to prevent ratelimiting
+    await sleep(5000);
   }
 
   return archiveData;

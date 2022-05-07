@@ -1,3 +1,7 @@
+# v0.5.1 (2022-05-07)
+
+- Avoid ratelimiting.
+
 # v0.5.0 (2022-05-07)
 
 - BREAKING: `archiveChannel()`'s `botMsg` and `ignoreSuppliedMessages` params have been removed - the function now just takes a `Message` and, optionally, `ignoredMsgs` - an array of `Messages` to ignore.
