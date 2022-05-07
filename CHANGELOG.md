@@ -1,3 +1,8 @@
+# v0.4.0 (2022-05-06)
+
+- BREAKING: Update to Revolt.JS v6.0.0.
+- Fix inability to fetch more than 100 messages.
+
 # v0.3.1 (2022-05-06)
 
 - Hotfix for v0.3.0.

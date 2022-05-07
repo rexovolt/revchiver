@@ -1,5 +1,4 @@
-import { Member } from "revolt.js/dist/maps/Members";
-import { Message } from "revolt.js/dist/maps/Messages";
+import { Member, Message } from "revolt.js";
 
 async function archiveChannel(
   msg: Message,
@@ -48,7 +47,7 @@ async function archiveChannel(
           ? `${sender?.avatar?._id}/${sender?.avatar?.filename}`
           : `${m.author?.avatar?._id}/${m.author?.avatar?.filename}`
       }`, // order: masq > server > global
-      content: m.content,
+      content: m.content ?? m.system,
       attachments: attachmentsObj,
     });
   }
