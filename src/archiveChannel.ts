@@ -1,3 +1,4 @@
+import { Member } from "revolt.js/dist/maps/Members";
 import { Message } from "revolt.js/dist/maps/Messages";
 
 async function archiveChannel(
@@ -27,44 +28,48 @@ async function archiveChannel(
   archiveData.archived_at = msg.createdAt;
 
   // fetch/push messages
+  function pushMsg(m: Message, users: Member[]) {
+    let sender;
+    for (const u of users!) {
+      if (m.author_id !== u.user?._id) continue;
+      sender = u;
+    }
+
+    let attachmentsObj: string[] = [];
+    m.attachments?.forEach((a) => {
+      attachmentsObj.push(`${autumnURL}/attachments/${a._id}/${a.filename}`);
+    });
+    archiveData.messages.push({
+      message_id: m._id,
+      sender_id: m.author_id,
+      sender_name: m.masquerade?.name ?? sender?.nickname ?? m.author?.username, // order: masq > nick > username
+      sender_avatar: `${autumnURL}/avatars/${
+        m.masquerade?.avatar ?? sender?.avatar
+          ? `${sender?.avatar?._id}/${sender?.avatar?.filename}`
+          : `${m.author?.avatar?._id}/${m.author?.avatar?.filename}`
+      }`, // order: masq > server > global
+      content: m.content,
+      attachments: attachmentsObj,
+    });
+  }
   let continueFetching = true;
-  let fetchbefore = botMsg
-    ? botMsg._id
-    : ignoreSuppliedMessage
-    ? msg._id
-    : undefined;
+  let fetchbefore = botMsg ? botMsg._id : msg._id;
   while (continueFetching) {
-    // hacky workaround for before param
-    const configObj = fetchbefore
-      ? { limit: 100, before: fetchbefore }
-      : { limit: 100 };
-    const msgs = await msg.channel?.fetchMessagesWithUsers(configObj);
+    const msgs = await msg.channel?.fetchMessagesWithUsers({
+      limit: 100,
+      before: fetchbefore,
+    });
     if (!msgs || !msgs.messages) return "nothingToArchive";
     const users = msgs.members;
+    if (!ignoreSuppliedMessage) {
+      const extraMsg = await msg.channel?.fetchMessagesWithUsers({
+        limit: 100,
+        before: fetchbefore,
+      });
+      pushMsg(extraMsg?.messages[0]!, extraMsg?.members!);
+    }
     msgs.messages.forEach((m) => {
-      let sender;
-      for (const u of users!) {
-        if (m.author_id !== u.user?._id) continue;
-        sender = u;
-      }
-
-      let attachmentsObj: string[] = [];
-      m.attachments?.forEach((a) => {
-        attachmentsObj.push(`${autumnURL}/attachments/${a._id}/${a.filename}`);
-      });
-      archiveData.messages.push({
-        message_id: m._id,
-        sender_id: m.author_id,
-        sender_name:
-          m.masquerade?.name ?? sender?.nickname ?? m.author?.username, // order: masq > nick > username
-        sender_avatar: `${autumnURL}/avatars/${
-          m.masquerade?.avatar ?? sender?.avatar
-            ? `${sender?.avatar?._id}/${sender?.avatar?.filename}`
-            : `${m.author?.avatar?._id}/${m.author?.avatar?.filename}`
-        }`, // order: masq > server > global
-        content: m.content,
-        attachments: attachmentsObj,
-      });
+      pushMsg(m, users!);
       if (msgs.messages.length < 100) {
         continueFetching = false;
       } else {
