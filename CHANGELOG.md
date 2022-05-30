@@ -1,3 +1,7 @@
+# v0.5.3 (2022-05-31)
+
+- The package should no longer get stuck in an infinite loop if there is only one message in a channel.
+
 # v0.5.2 (2022-05-07)
 
 - Optimise message fetcher.
