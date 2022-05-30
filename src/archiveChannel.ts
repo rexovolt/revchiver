@@ -65,14 +65,16 @@ async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
       const extraMsg = await msg.channel?.fetchMessage(msg._id);
       pushMsg(extraMsg!);
     }
+
+    if (msgs.length < 100) {
+      continueFetching = false;
+    } else {
+      fetchbefore = msgs[99]._id;
+    }
+
     msgs.forEach((m) => {
       if (!ignoredMsgs || !ignoredMsgs.includes(m)) {
         pushMsg(m);
-      }
-      if (msgs.length < 100) {
-        continueFetching = false;
-      } else {
-        fetchbefore = msgs[99]._id;
       }
     });
 
