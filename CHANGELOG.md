@@ -1,4 +1,4 @@
-# v0.5.4 (2022-10-01)
+# v0.5.4 (2022-11-08)
 
 - The timestamp/archiver ID should now always be correct.
 - Fix build/typing issues.
