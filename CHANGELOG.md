@@ -1,3 +1,8 @@
+# v0.5.4 (2022-10-01)
+
+- The timestamp/archiver ID should now always be correct.
+- Fix build/typing issues.
+
 # v0.5.3 (2022-05-31)
 
 - The package should no longer get stuck in an infinite loop if there is only one message in a channel.

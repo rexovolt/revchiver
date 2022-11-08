@@ -1,6 +1,6 @@
 import { Member, Message } from "revolt.js";
 
-async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
+export async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
   const sleep = (ms: number | undefined) =>
     new Promise((r) => setTimeout(r, ms));
 
@@ -16,14 +16,17 @@ async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
     messages: [{}],
   };
 
+  // check if the script is being run by rexbot
+  const isRexBot = msg.client.user?._id! === "01FEEXZT74QWW1HSQH8B8BH1S1";
+
   // gather info
   const isServer = msg.channel?.server;
   archiveData.server_id = isServer ? msg.channel.server._id : "notAServer";
   archiveData.server_name = isServer ? msg.channel.server.name : "notAServer";
   archiveData.channel_id = msg.channel_id!;
   archiveData.channel_name = msg.channel?.name!;
-  archiveData.archiver = msg.author_id;
-  archiveData.archived_at = msg.createdAt;
+  archiveData.archiver = isRexBot ? msg.author?._id! : msg.client.user?._id!; // if the script is being run by rexbot, use the id of the author of the message; else, use the client's id
+  archiveData.archived_at = new Date().getTime();
 
   // fetch/push messages
   function pushMsg(m: Message) {
@@ -84,5 +87,3 @@ async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
 
   return archiveData;
 }
-
-export { archiveChannel };
