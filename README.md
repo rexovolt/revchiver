@@ -7,7 +7,7 @@ Archiving library for Revolt.
 Basic example - **make sure to pass Revolt.JS messages to the function**:
 
 ```ts
-import { archiveChannel } from "revchiver/dist";
+import { archiveChannel } from "revchiver";
 
 const msg = "<insert revolt.js message object here>";
 const ignoredMsgs = ["array", "of", "message", "objects"];

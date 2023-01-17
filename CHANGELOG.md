@@ -1,3 +1,9 @@
+# v6.0.0 (2023-01-14)
+
+- BREAKING: You must now import functions from the package itself - replace any imports from `revchiver/dist` with imports from `revchiver`.
+- Reactions are now archived.
+- Updated to Revolt.JS v6.0.19.
+
 # v0.5.4 (2022-11-08)
 
 - The timestamp/archiver ID should now always be correct.

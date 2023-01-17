@@ -1,3 +1,4 @@
+import { ObservableSet } from "mobx";
 import { Member, Message } from "revolt.js";
 
 export async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
@@ -41,6 +42,18 @@ export async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
     m.attachments?.forEach((a) => {
       attachmentsObj.push(`${autumnURL}/attachments/${a._id}/${a.filename}`);
     });
+
+    type Reaction = {
+      emoji: string;
+      reactors: any;
+    };
+
+    let reactionsObj: Reaction[] = [];
+    m.reactions.forEach((reactors, emoji) => {
+      const obj = { emoji, reactors };
+      reactionsObj.push(obj);
+    });
+
     archiveData.messages.push({
       message_id: m._id,
       sender_id: m.author_id,
@@ -53,6 +66,7 @@ export async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
       }`, // order: masq > server > global
       content: m.content ?? m.system,
       attachments: attachmentsObj,
+      reactions: reactionsObj,
     });
   }
   let continueFetching = true;
@@ -62,7 +76,7 @@ export async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
       limit: 100,
       before: fetchbefore,
     });
-    if (!msgs) return "nothingToArchive";
+    if (!msgs) return "nothingToArchive?";
 
     if (fetchbefore === msg._id) {
       const extraMsg = await msg.channel?.fetchMessage(msg._id);
