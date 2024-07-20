@@ -1,5 +1,4 @@
-import { ObservableSet } from "mobx";
-import { Member, Message } from "revolt.js";
+import type { /* Member, */ Message } from "revolt.js";
 
 export async function archiveChannel(msg: Message, ignoredMsgs?: Message[]) {
   const sleep = (ms: number | undefined) =>
